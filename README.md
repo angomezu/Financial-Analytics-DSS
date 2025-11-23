@@ -12,7 +12,7 @@ The use case focuses on "Dual-Mandate Investing" screening S&P 500 stocks based 
 
 Instead of just dragging a CSV into a visualization tool, this project simulates a scalable data environment:
 
-Storage Layer (MySQL): We first need to create a database, set the primary and foreign keys in order to make sure the data is loaded there. When the data is loaded into a relational database, we make sure to pay attention to the data types and schema integrity. 
+**1) Storage Layer (MySQL):** We first need to create a database, set the primary and foreign keys in order to make sure the data is loaded there. When the data is loaded into a relational database, we make sure to pay attention to the data types and schema integrity. 
 
 <details>
 <summary><b>Click to view the DB query</b></summary>
@@ -70,7 +70,7 @@ CREATE TABLE investment_universe (
 
 </details>
 
-ETL Layer (Python): Scripts extract raw data, clean inconsistent formatting (e.g., fixing inverted 52-week high/low columns), and simulate proprietary analyst scores.
+**2) ETL Layer (Python):** Scripts extract raw data, clean inconsistent formatting (e.g., fixing inverted 52-week high/low columns), and simulate proprietary analyst scores.
 
 <details>
 <summary><b>Click to view the full ETL Python Script</b></summary>
@@ -284,7 +284,7 @@ except Exception as e:
 ```
 </details>
 
-Semantic Layer (Power BI): The dashboard connects via Import Mode, allowing the final report to be a self-contained, high-performance artifact that doesn't require the end-user to have database access.
+**3) Semantic Layer (Power BI):** The dashboard connects via Import Mode, allowing the final report to be a self-contained, high-performance artifact that doesn't require the end-user to have database access.
 
 graph LR
     A [Raw Data Sources] -->|Pandas Clean & Transform| B(Python ETL)
