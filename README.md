@@ -57,6 +57,12 @@ The specific use case focuses on **"Dual-Mandate Investing"** screening S&P 500 
 
 ## The Architecture (How it Works)
 
+Prerequisites:
+
+Python 3.9+
+MySQL Server
+Power BI Desktop
+
 Instead of the common "drag-and-drop CSV" approach, this project simulates a secure enterprise data environment.
 
 ```mermaid
@@ -429,13 +435,7 @@ The dashboard connects to MySQL via Import Mode. Why Import Mode? Because this c
 
 Security: Unlike Excel spreadsheets, which are often emailed and version-conflicted, this dataset enables Row-Level Security (RLS) and unified workspace management.
 
-
-
-
-<p float="left"><img src="image_4c7d3f.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d78.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d9a.png" width="300" /></p>
-
-
-Technical Implementation Details
+**Technical Implementation Details**
 
 Advanced DAX Logic
 This project moves beyond simple aggregations (SUM) to use context-aware financial logic.
@@ -471,12 +471,9 @@ IF(ISBLANK(Score), "Not Rated", FORMAT(Score, "0.0"))
 How to Use This Template
 This repository is open source. It is intended as a starting point for developers looking to build robust BI solutions. While this prototype uses a static snapshot of data, the architecture is ready to be connected to live APIs (e.g., Yahoo Finance, Alpha Vantage) for real-time analysis.
 
-Prerequisites:
+Developed by 
 
-Python 3.9+
-MySQL Server
-Power BI Desktop
-
-Developed by Angel Barrera, M.S. Data Science, Computer Engineer.
-
-
+Angel Barrera
+Computer Engineer
+Master’s in Applied Data Science
+Graduate Assistant at East Tennessee State University
