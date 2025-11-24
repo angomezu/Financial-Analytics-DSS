@@ -48,6 +48,12 @@ The specific use case focuses on **"Dual-Mandate Investing"** screening S&P 500 
    
 2. Mobile Experience: The report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity
 
+    ![Investment Screener](images/mobile_2.jpg)
+    ![Investment Screener](images/mobile_3.jpg)
+    ![Risk vs. Reward](images/mobile_4.jpg)
+    ![Financial Detail View](images/mobile_1.jpg)
+    ![Financial Detail View](images/mobile_5.jpg)
+
 ## The Architecture (How it Works)
 
 Instead of the common "drag-and-drop CSV" approach, this project simulates a secure enterprise data environment.
