@@ -32,6 +32,10 @@ Python 3.9+
 MySQL Server
 Power BI Desktop
 
+**Wacth Recorded Demo here:**
+
+[![YouTube](images/video_thumbnail.png)](https://youtu.be/2Bm8sHEkZ-o)
+
 **Dashboard Views**
 
 1. Desktop Experience The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.
