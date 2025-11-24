@@ -13,7 +13,40 @@ This project serves as a functional **prototype and template** for building a sc
 
 The specific use case focuses on **"Dual-Mandate Investing"** screening S&P 500 stocks based on both financial value (P/E Ratio, Dividends) and ethical alignment (ESG Risk Scores). However, the architecture is domain-agnostic and designed to be a starting point for more complex enterprise needs involving historic data and live feeds.
 
----
+**Dashboard Views**
+
+1. Desktop Experience The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.
+
+1. **Page 1 - Investment Screener**
+    * **Purpose:** Primary filtering engine for the S&P 500 universe.
+    * **Key Visuals:**
+        * **Valuation Gauge:** Visualizes the portfolio's aggregate P/E against the hard limit of 25.0x.
+        * **Risk Donut:** Breaks down the selected cohort by ESG Risk Level.
+        * **Conditional Grid:** A detail table that auto-flags "Overvalued" stocks in red based on dynamic sector benchmarks.
+
+    ![Investment Screener](images/page_1.png)
+    
+2. **Page 2 - Risk vs. Reward**
+    * **Purpose:** Visual trade-off analysis between Financial Value and Ethical Risk.
+    * **Key Visuals:**
+        1. **Scatter Matrix:** Plots Average P/E (X-Axis) vs. ESG Risk Score (Y-Axis).
+        2. **Quadrant Analysis:** Automated reference lines divide the market into four actionable zones.
+        3. **The Sweet Spot:** The bottom-left quadrant represents the "Investable" Sweet Spot (Low Cost / Low Risk).
+           
+    ![Risk vs. Reward](images/page_2.png)
+
+4. **Page 3 - Financial Detail View**
+    * **Purpose:** Deep fundamental analysis of capital allocation.
+    * **Key Visuals:**
+        1. **Correlation Plot:** P/E vs. Price-to-Book to identify "Deep Value" assets.
+        2. **Capital Funnel:** Visualizing the dominance of Tech in the S&P 500 market cap.
+        3. **Decomposition Tree:** Allows users to drill down from Total Market Cap $\to$ Sector $\to$ Industry $\to$ Company.
+
+    ![Financial Detail View](images/Page_3.1.png)
+    ![Financial Detail View](images/Page_3.2.png)
+    ![Financial Detail View](images/Page_3.3.png)
+   
+2. Mobile Experience: The report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity
 
 ## The Architecture (How it Works)
 
@@ -389,32 +422,7 @@ The dashboard connects to MySQL via Import Mode. Why Import Mode? Because this c
 
 Security: Unlike Excel spreadsheets, which are often emailed and version-conflicted, this dataset enables Row-Level Security (RLS) and unified workspace management.
 
-**Dashboard Views**
 
-1. Desktop Experience The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.
-
-1. **Page 1 - Investment Screener**
-    * **Purpose:** Primary filtering engine for the S&P 500 universe.
-    * **Key Visuals:**
-        * **Valuation Gauge:** Visualizes the portfolio's aggregate P/E against the hard limit of 25.0x.
-        * **Risk Donut:** Breaks down the selected cohort by ESG Risk Level.
-        * **Conditional Grid:** A detail table that auto-flags "Overvalued" stocks in red based on dynamic sector benchmarks.
-    
-2. **Page 2 - Risk vs. Reward**
-    * **Purpose:** Visual trade-off analysis between Financial Value and Ethical Risk.
-    * **Key Visuals:**
-        1. **Scatter Matrix:** Plots Average P/E (X-Axis) vs. ESG Risk Score (Y-Axis).
-        2. **Quadrant Analysis:** Automated reference lines divide the market into four actionable zones.
-        3. **The Sweet Spot:** The bottom-left quadrant represents the "Investable" Sweet Spot (Low Cost / Low Risk).
-
-3. **Page 3 - Financial Detail View**
-    * **Purpose:** Deep fundamental analysis of capital allocation.
-    * **Key Visuals:**
-        1. **Correlation Plot:** P/E vs. Price-to-Book to identify "Deep Value" assets.
-        2. **Capital Funnel:** Visualizing the dominance of Tech in the S&P 500 market cap.
-        3. **Decomposition Tree:** Allows users to drill down from Total Market Cap $\to$ Sector $\to$ Industry $\to$ Company.
-    
-2. Mobile Experience: The report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity
 
 
 <p float="left"><img src="image_4c7d3f.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d78.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d9a.png" width="300" /></p>
