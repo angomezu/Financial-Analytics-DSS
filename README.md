@@ -32,9 +32,9 @@ Python 3.9+
 MySQL Server
 Power BI Desktop
 
-**Wacth Recorded Demo here:**
+**Watch the Recorded Demo by clicking this image:**
 
-[![YouTube](images/video_thumbnail.png)](https://youtu.be/2Bm8sHEkZ-o)
+[![YouTube](images/presentation.png)](https://youtu.be/2Bm8sHEkZ-o)
 
 **Dashboard Views**
 
