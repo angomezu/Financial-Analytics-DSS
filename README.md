@@ -22,6 +22,16 @@ While this implementation focuses on finance, the underlying architecture is dom
 
 Feel free to reach out if you have any question, suggestion, or would like to collaborate! 
 
+**How to replicate this project**
+
+This repository is open source. It is intended as a starting point for developers looking to build robust BI solutions. While this prototype uses a static snapshot of data, the architecture is ready to be connected to live APIs (e.g., Yahoo Finance, Alpha Vantage) for real-time analysis.
+
+Prerequisites:
+
+Python 3.9+
+MySQL Server
+Power BI Desktop
+
 **Dashboard Views**
 
 1. Desktop Experience The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.
@@ -65,12 +75,6 @@ Feel free to reach out if you have any question, suggestion, or would like to co
 </p>
 
 ## The Architecture (How it Works)
-
-Prerequisites:
-
-Python 3.9+
-MySQL Server
-Power BI Desktop
 
 Instead of the common "drag-and-drop CSV" approach, this project simulates a secure enterprise data environment.
 
@@ -477,11 +481,38 @@ VAR Score = SELECTEDVALUE('investment_universe'[total_esg_risk])
 RETURN
 IF(ISBLANK(Score), "Not Rated", FORMAT(Score, "0.0"))
 ```
-How to Use This Template
-This repository is open source. It is intended as a starting point for developers looking to build robust BI solutions. While this prototype uses a static snapshot of data, the architecture is ready to be connected to live APIs (e.g., Yahoo Finance, Alpha Vantage) for real-time analysis.
+
+---
+
+## Next Steps & Roadmap: Scaling to the Cloud
+
+This project is currently a local prototype designed to validate the "Dual-Mandate" screening logic. However, to scale this solution for a firm managing billions in assets, the architecture must evolve from a local workstation to a cloud-native environment.
+
+Below is what a **Full ETL Cloud Architecture (V2.0)** would look like. This would be designed to handle live data ingestion, unstructured text analysis (News/Sentiment), and massive scalability.
+
+![Full Cloud Architecture](images/full_cloud_architecture.png)
+
+### **The Evolution Plan**
+
+**1. Ingestion Layer (Data Factory)**
+* **Current:** Manual execution of Python scripts.
+* **Future:** **Azure Data Factory (ADF)** pipelines will trigger extraction jobs automatically at any given time (e.g., 3:00 AM daily). This ensures portfolio managers have fresh data before the market opens.
+
+**2. Storage Layer (Data Lake & NoSQL)**
+* **Current:** Structured SQL tables only.
+* **Future:** Implementation of a **Data Lake** to store unstructured data such as SEC filings (10-K/10-Q PDF files) and news articles. **Azure Cosmos DB** (NoSQL) will be used to store flexible JSON responses from modern APIs, allowing us to ingest new ESG metrics without altering the database schema.
+
+**3. Compute Layer (Batch Processing)**
+* **Current:** Local CPU processing.
+* **Future:** **Azure Batch** will handle heavy computational loads, such as running Natural Language Processing (NLP) models on thousands of news articles to generate a "Sentiment Score" for each stock, adding a third dimension to our screening logic.
+
+**4. Serving Layer (Power BI Embedded)**
+* **Current:** Power BI Desktop file (.pbix).
+* **Future:** **Power BI Embedded** will serve the dashboard directly within the firm's secure web portal, allowing agents to access the tool from iPads or client sites without needing the desktop application.
+
+This roadmap or architecture moves this project from just a tool to an actual enterprise platform, capable of digesting not just market numbers, but the unstructured information that drives modern markets. And even allowing for future Data Science applications, like building predictions, regressions, classifications, and more.
 
 Developed by 
-
 Angel Barrera
 Computer Engineer
 Master’s in Applied Data Science
