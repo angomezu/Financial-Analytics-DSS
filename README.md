@@ -9,9 +9,18 @@
 
 ## Project Overview
 
-This project serves as a functional **prototype and template** for building a scalable financial decision support system. It demonstrates how to transition from fragile, static Excel reporting to a robust, full-stack data pipeline using **Python, SQL, and Power BI**.
+This project was developed as the capstone for the **CSCI 5050: Decision Support Systems** course. Our goal was to apply data engineering principles to a real-world scenario, choosing the financial sector as our case study. We simulated the operations of **"Apex Private Capital,"** a specialized investment firm managing a portfolio of S&P 500 companies. I intend to share the entire structure as an open-source project that anyone can use to kickstart a more robust system (see the last part of this readme for an idea of the "next steps").
 
-The specific use case focuses on **"Dual-Mandate Investing"** screening S&P 500 stocks based on both financial value (P/E Ratio, Dividends) and ethical alignment (ESG Risk Scores). However, the architecture is domain-agnostic and designed to be a starting point for more complex enterprise needs involving historic data and live feeds.
+The core challenge was to mimic a company that needed to move away from the industry standard of fragmented, static Excel spreadsheets. To achieve that, we architected a **functional prototype** of a modern decision support system. This project demonstrates how to build a robust, full-stack data pipeline—extracting raw financial and quantitative data, transforming it via **Python**, ensuring integrity with **MySQL**, and delivering actionable insights through **Power BI**.
+
+### The Business Case: "Dual-Mandate Investing"
+The specific use case focuses on a **"Dual-Mandate"** strategy. We needed a tool that could reflect the stocks based on two conflicting criteria simultaneously:
+1.  **Financial Value:** Metrics like P/E Ratio and Dividend Yield (Value Investing).
+2.  **Ethical Alignment:** Metrics like ESG Risk Scores and Controversy Levels (Values-Based Investing).
+
+While this implementation focuses on finance, the underlying architecture is domain-agnostic. It serves as a scalable template for any enterprise need involving complex data integration, historic tracking, and live reporting feeds.
+
+Feel free to reach out if you have any question, suggestion, or would like to collaborate! 
 
 **Dashboard Views**
 
