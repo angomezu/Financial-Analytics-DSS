@@ -47,12 +47,13 @@ The specific use case focuses on **"Dual-Mandate Investing"** screening S&P 500 
     ![Financial Detail View](images/Page_3.3.png)
    
 2. Mobile Experience: The report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity
-
-    ![Investment Screener](images/mobile_2.jpg)
-    ![Investment Screener](images/mobile_3.jpg)
-    ![Risk vs. Reward](images/mobile_4.jpg)
-    ![Financial Detail View](images/mobile_1.jpg)
-    ![Financial Detail View](images/mobile_5.jpg)
+<p float="left">
+  <img src="images/mobile_1.png" width="300" />
+  <img src="images/mobile_1.1.png" width="300" /> 
+  <img src="images/mobile_2.png" width="300" />
+  <img src="images/mobile_3.1.png" width="300" />
+  <img src="images/mobile_3.png" width="300" />
+</p>
 
 ## The Architecture (How it Works)
 
