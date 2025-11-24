@@ -1,4 +1,4 @@
-# Apex Capital: Financial Analytics Dashboard Template (ETL + Power BI)
+# Apex Capital: Financial Analytics Decision Support System (ETL + Power BI)
 
 **A Prototype for Merging Financial Data with ESG Metrics**
 
