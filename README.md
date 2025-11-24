@@ -383,17 +383,45 @@ except Exception as e:
 
 ```
 
-3. Semantic Layer (Power BI)
-The dashboard connects to MySQL via Import Mode.
+3. Semantic Layer (Power BI):
 
-Why Import Mode? It creates a high-performance, compressed in-memory model. This ensures the final .pbix file is a self-contained artifact that can be securely shared with stakeholders without requiring them to have direct network access to the backend database.
+The dashboard connects to MySQL via Import Mode. Why Import Mode? Because this creates a high-performance, compressed in-memory model. This ensures the final .pbix file is a self-contained artifact that can be securely shared with stakeholders without requiring them to have direct network access to the backend database. Or to simply share this file as an open-source resource.
 
-Security: Unlike Excel spreadsheets which are often emailed and version-conflicted, this dataset enables Row-Level Security (RLS) and unified workspace management.
+Security: Unlike Excel spreadsheets, which are often emailed and version-conflicted, this dataset enables Row-Level Security (RLS) and unified workspace management.
 
- Dashboard Views1. Desktop ExperienceThe dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.Page 1 - Investment ScreenerPurpose: Primary filtering engine for the S&P 500 universe.Key Visuals: * Valuation Gauge: Visualizes the portfolio's aggregate P/E against the hard limit of 25.0x.Risk Donut: Breaks down the selected cohort by ESG Risk Level.Conditional Grid: A detail table that auto-flags "Overvalued" stocks in red based on dynamic sector benchmarks.Page 2 - Risk vs. RewardPurpose: Visual trade-off analysis between Financial Value and Ethical Risk.Key Visuals: * Scatter Matrix: Plots Average P/E (X-Axis) vs. ESG Risk Score (Y-Axis).Quadrant Analysis: Automated reference lines divide the market into four actionable zones. The bottom-left quadrant represents the "Investable" Sweet Spot (Low Cost / Low Risk).Page 3 - Financial Detail ViewPurpose: Deep fundamental analysis of capital allocation.Key Visuals: * Correlation Plot: P/E vs. Price-to-Book to identify "Deep Value" assets.Capital Funnel: Visualizing the dominance of Tech in the S&P 500 market cap.Decomposition Tree: Allows users to drill down from Total Market Cap $\to$ Sector $\to$ Industry $\to$ Company.2. Mobile ExperienceThe report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity.<p float="left"><img src="image_4c7d3f.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d78.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d9a.png" width="300" /></p>
+**Dashboard Views**
+
+1. Desktop Experience The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.
+
+1. **Page 1 - Investment Screener**
+    * **Purpose:** Primary filtering engine for the S&P 500 universe.
+    * **Key Visuals:**
+        * **Valuation Gauge:** Visualizes the portfolio's aggregate P/E against the hard limit of 25.0x.
+        * **Risk Donut:** Breaks down the selected cohort by ESG Risk Level.
+        * **Conditional Grid:** A detail table that auto-flags "Overvalued" stocks in red based on dynamic sector benchmarks.
+    
+2. **Page 2 - Risk vs. Reward**
+    * **Purpose:** Visual trade-off analysis between Financial Value and Ethical Risk.
+    * **Key Visuals:**
+        1. **Scatter Matrix:** Plots Average P/E (X-Axis) vs. ESG Risk Score (Y-Axis).
+        2. **Quadrant Analysis:** Automated reference lines divide the market into four actionable zones.
+        3. **The Sweet Spot:** The bottom-left quadrant represents the "Investable" Sweet Spot (Low Cost / Low Risk).
+
+3. **Page 3 - Financial Detail View**
+    * **Purpose:** Deep fundamental analysis of capital allocation.
+    * **Key Visuals:**
+        1. **Correlation Plot:** P/E vs. Price-to-Book to identify "Deep Value" assets.
+        2. **Capital Funnel:** Visualizing the dominance of Tech in the S&P 500 market cap.
+        3. **Decomposition Tree:** Allows users to drill down from Total Market Cap $\to$ Sector $\to$ Industry $\to$ Company.
+    
+2. Mobile Experience: The report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity
+
+
+<p float="left"><img src="image_4c7d3f.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d78.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d9a.png" width="300" /></p>
 
 
 Technical Implementation Details
+
 Advanced DAX Logic
 This project moves beyond simple aggregations (SUM) to use context-aware financial logic.
 
