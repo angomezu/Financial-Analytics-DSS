@@ -1,4 +1,6 @@
-# Apex Capital: Financial Analytics Decision Support System (ETL + Power BI)
+# Apex Capital: A Full-Stack Decision Support System for Dual-Mandate Investing (Financial + ESG)
+
+Apex Capital: Financial Analytics Decision Support System (ETL + Power BI)
 
 **A Prototype for Merging Financial Data with ESG Metrics**
 
