@@ -11,7 +11,7 @@
 
 This project was developed as the capstone for the **CSCI 5050: Decision Support Systems** course. Our goal was to apply data engineering principles to a real-world scenario, choosing the financial sector as our case study. We simulated the operations of **"Apex Private Capital,"** a specialized investment firm managing a portfolio of S&P 500 companies. I intend to share the entire structure as an open-source project that anyone can use to kickstart a more robust system (see the last part of this readme for an idea of the "next steps").
 
-The core challenge was to mimic a company that needed to move away from the industry standard of fragmented, static Excel spreadsheets. To achieve that, we architected a **functional prototype** of a modern decision support system. This project demonstrates how to build a robust, full-stack data pipeline—extracting raw financial and quantitative data, transforming it via **Python**, ensuring integrity with **MySQL**, and delivering actionable insights through **Power BI**.
+The core challenge was to mimic a company that needed to move away from the industry standard of fragmented, static Excel spreadsheets. To achieve that, we architected a **functional prototype** of a modern decision support system. This project demonstrates how to build a robust, full-stack data pipeline extracting raw financial and quantitative data, transforming it via **Python**, ensuring integrity with **MySQL**, and delivering actionable insights through **Power BI**.
 
 ### The Business Case: "Dual-Mandate Investing"
 The specific use case focuses on a **"Dual-Mandate"** strategy. We needed a tool that could reflect the stocks based on two conflicting criteria simultaneously:
