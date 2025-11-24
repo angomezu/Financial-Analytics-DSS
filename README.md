@@ -286,23 +286,53 @@ except Exception as e:
 
 **3) Semantic Layer (Power BI):** The dashboard connects via Import Mode, allowing the final report to be a self-contained, high-performance artifact that doesn't require the end-user to have database access.
 
-graph LR
+
     A [Raw Data Sources] -->|Pandas Clean & Transform| B(Python ETL)
     B -->|SQLAlchemy| C[(MySQL Database)]
     C -->|Import Mode| D[Power BI Dashboard]
 
 
+*image of connection*
+
 **Dashboard Views**
 
-1. Desktop Experience
+**1. Desktop Experience**
+   
+The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white and blue theme optimized for clarity and high-density information display.
 
-The dashboard features a custom "Financial Terminal" design system (white/blue theme) focused on high-density information.
+Page 1 - Investment Screener: This page serves as the primary filtering engine for the investment universe.
 
-The Screener: A funnel to filter the 500+ companies down to a viable shortlist using dynamic benchmarks.
+Key Features:
 
-Risk Matrix: A scatter plot visualizing the trade-off between Financial Reward (X-Axis) and Ethical Risk (Y-Axis).
+Top KPI Ribbon: Displays high-level metrics such as total companies (505), industries (106), sectors (11), and the average P/E ratio (24.81) of the current selection.
 
-Deep Dive: Hierarchical decomposition trees and funnel charts for fundamental analysis.
+Valuation Gauge: A "P/E Benchmark Analysis" gauge that visualizes the current portfolio's average P/E against the firm's target limit of 25.
+
+Risk Distribution: A "Portfolio Yield" donut chart that breaks down the selected companies by their ESG Risk Level (Low, Medium, High, Severe).
+
+Detailed Data Grid: A tabular view of individual tickers with conditional formatting (red text) highlighting companies that exceed valuation thresholds.
+
+Page 2 - Risk vs. Reward: This page provides a visual trade-off analysis between financial value and ethical risk.
+
+Key Features:
+
+Scatter Plot Matrix: The "Risk-Adjusted Opportunity Map" plots the Average P/E Ratio (X-Axis) against the Average Total ESG Risk (Y-Axis).
+
+Quadrant Analysis: Automated reference lines (Max P/E: 25.00, High ESG Risk: 30.00) divide the chart into four actionable zones. The bottom-left quadrant represents the ideal "investable" zone (Low Cost, Low Risk).
+
+Cluster Identification: Bubbles are color-coded by Sector and sized by Market Cap, allowing for instant identification of sector-specific risk clusters.
+
+Page 3 - Financial Detail View: This page offers a deep fundamental analysis of capital allocation and market valuation.
+
+Key Features:
+
+Correlation Analysis: A scatter plot comparing "PE Ratio vs. Price to Book" to identify deep-value opportunities (low earnings multiples combined with low book value multiples).
+
+Capital Decomposition: A "Market Cap by Sector" funnel chart that visualizes the distribution of capital across the S&P 500, clearly showing the dominance of Information Technology.
+
+Hierarchical Breakdown: A decomposition tree allows users to drill down from Total Market Cap into specific Sectors, Industries, and individual Companies to see exactly where value is concentrated.
+
+Fundamental Heatmap: A matrix table comparing average P/E, Price-to-Book, Dividend Yield, and EPS across sectors, using conditional formatting (green/red backgrounds) to highlight undervalued and overvalued sectors.
 
 **2. Mobile Experience**
 
@@ -328,11 +358,59 @@ Data Simulation: Generating "Proprietary Scores" to test how internal data merge
 
 DAX Measures
 
-Example: Dynamic Benchmarking
-This measure calculates the average P/E ratio of a sector ignoring the user's specific company selection, allowing for relative comparison.
+1. ESG Display:
+   
+```
+ESG Display = 
+VAR Score = SELECTEDVALUE('wealth_management_dss investment_universe'[total_esg_risk])
+RETURN
+IF(ISBLANK(Score), "Not Rated", FORMAT(Score, "0.0"))
+```
 
+2.Formatting PE Color:
+```
+   Formatting PE Color = 
+VAR CurrentPE = SELECTEDVALUE('wealth_management_dss investment_universe'[pe_ratio])
+VAR SectorAvg = [Sector Avg PE]
+RETURN
+IF(
+    NOT(ISBLANK(CurrentPE)) && CurrentPE > SectorAvg, 
+    "#FF0000", -- Red Hex Code
+    "#FFFFFF"  -- Black Hex Code
+)
+```
+
+3. Is Investable:
+```
+ Is Investable = 
+VAR MaxPE = 25
+VAR SectorAvg = [Sector Avg PE]
+VAR CurrentPE = SELECTEDVALUE('wealth_management_dss investment_universe'[pe_ratio])
+
+RETURN 
+IF(
+    (CurrentPE < MaxPE || CurrentPE <= SectorAvg) && 
+    NOT(ISBLANK(CurrentPE)), 
+    1, 
+    0
+)
+```
+
+4. Max PE Ratio:
+```
+Max_PE_Ratio = 50
+```
+
+5. Target PE Ratio:
+```
+Target_PE_Ratio = 25
+```
+
+5. Sector AVG PE:
+```
 Sector Avg PE = 
 CALCULATE(
-    AVERAGE('investment_universe'[pe_ratio]),
-    ALLEXCEPT('investment_universe', 'investment_universe'[sector])
+    AVERAGE('wealth_management_dss investment_universe'[pe_ratio]),
+    ALLEXCEPT('wealth_management_dss investment_universe', 'wealth_management_dss investment_universe'[sector])
 )
+```
