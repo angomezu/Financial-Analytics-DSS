@@ -1,24 +1,34 @@
-Financial Analytics Dashboard (Pytho + MySQL + Power BI)
+# Apex Capital: Financial Analytics Dashboard Template (ETL + Power BI)
 
-This is a prototype for merging financial data with ESG metrics.
+**A Prototype for Merging Financial Data with ESG Metrics**
 
-**Project Overview**
+![Power BI](https://img.shields.io/badge/Power_BI-Import_Mode-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+![Python](https://img.shields.io/badge/Python-Pandas_%7C_SQLAlchemy-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Relational_Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Prototype-orange?style=for-the-badge)
 
-This project serves as a functional prototype and template for building a financial decision support system. It demonstrates how to move beyond static Excel reporting by building a full-stack data pipeline using Python, SQL, and Power BI.
+## Project Overview
 
-The use case focuses on "Dual-Mandate Investing" screening S&P 500 stocks based on both financial value (P/E Ratio, Dividends) and ethical alignment (ESG Risk Scores). However, the architecture is agnostic and can be adapted for any domain requiring data integration and interactive reporting.
+This project serves as a functional **prototype and template** for building a scalable financial decision support system. It demonstrates how to transition from fragile, static Excel reporting to a robust, full-stack data pipeline using **Python, SQL, and Power BI**.
 
-**The Architecture (How it Works)**
+The specific use case focuses on **"Dual-Mandate Investing"** screening S&P 500 stocks based on both financial value (P/E Ratio, Dividends) and ethical alignment (ESG Risk Scores). However, the architecture is domain-agnostic and designed to be a starting point for more complex enterprise needs involving historic data and live feeds.
 
-Instead of just dragging a CSV into a visualization tool, this project simulates a scalable data environment:
+---
 
-**1) Storage Layer (MySQL):** We first need to create a database, set the primary and foreign keys in order to make sure the data is loaded there. When the data is loaded into a relational database, we make sure to pay attention to the data types and schema integrity. 
+## The Architecture (How it Works)
 
-<details>
-<summary><b>Click to view the DB query</b></summary>
+Instead of the common "drag-and-drop CSV" approach, this project simulates a secure enterprise data environment.
+
+```mermaid
+graph LR
+    A[Raw CSV Data] -->|Pandas ETL Script| B(Python Transformation)
+    B -->|SQLAlchemy| C[(MySQL Database)]
+    C -->|Import Mode| D[Power BI Semantic Model]
+    D -->|DAX Measures| E[Interactive Dashboard]
+```
+1. Storage Layer (MySQL): I enforce data integrity by loading data into a relational database rather than relying on flat files. This ensures strict typing (e.g., BIGINT for Market Cap, DECIMAL for Prices) and schema consistency.
 
 ```SQL
-
 -- Creating the database schema
 CREATE DATABASE IF NOT EXISTS wealth_management_dss;
 USE wealth_management_dss;
@@ -65,18 +75,16 @@ CREATE TABLE investment_universe (
 
     PRIMARY KEY (symbol)
 );
-
 ```
 
-</details>
+2. ETL Layer (Python): The "Extract, Transform, Load" process is handled via Python script. This layer is responsible for:
 
-**2) ETL Layer (Python):** Scripts extract raw data, clean inconsistent formatting (e.g., fixing inverted 52-week high/low columns), and simulate proprietary analyst scores.
-
-<details>
-<summary><b>Click to view the full ETL Python Script</b></summary>
+    1. Data Cleaning: Regex parsing to standardize categorical text (e.g., "Severe Controversy" $\to$ "Severe").
+    2. Logic Correction: Algorithmic identification and swapping of inverted columns (e.g., where Low > High).
+    3. Simulation: Generating "Proprietary Analyst Scores" to mimic the integration of internal private data with public market data.
+       
 
 ```python
-
 import pandas as pd
 import numpy as np
 
@@ -99,6 +107,17 @@ print(df_financials.head())
 print("\n Numeric Statistics:")
 print(df_financials.describe())
 
+# Main Finding: 
+# 
+# Two columns are inverted. The 52 Week Low and 52 Week High columns have logical differences. The describe statistics confirs that the mean for Low $122.62 > mean High $83.53. Therefore, in our transformation process will swap them.
+# 
+# Minor Issues:
+# 
+# Nulls: There are minor, acceptable data gaps. 2 companies are missing Price/Earnings (505 - 503 = 2), and 8 are missing Price/Book (505 - 497 = 8). This isn't an error, it's just incomplete data we'll have to live with.
+# 
+# Cleanup: The SEC Filings column is confirmed as object (text) and is not needed for our KPIs. It will be dropped.
+# 
+# File Quality: Our output shows Price/Earnings is already a float64 (numeric), which is good. The file is cleaner than we might have assumed.
 
 # Analysis of ESG (df_esg)
 print("Analysis: ESG (df_esg)")
@@ -114,12 +133,41 @@ print(df_esg['Controversy Level'].unique())
 print("\n Unique 'ESG Risk Percentile' values (first 10):")
 print(df_esg['ESG Risk Percentile'].unique()[:10])
 
+# Main Finding: 
+# 
+# Large Data Gaps. This file is missing a lot of data. Out of 503 companies, 73 are missing all primary ESG data (Total ESG Risk score is 430 non-null). This is a major limitation (503 - 430 = 73). These NaN values are not errors, but they confirm a large portion of the companies are "Not Rated."
+# 
+# Main Finding: Dirty Text Columns. The unique outputs confirm our cleaning plan is necessary.
+# 
+# Controversy Level: The values are verbose (e.g., 'Moderate Controversy Level'). We must strip the "Controversy Level" suffix.
+# 
+# ESG Risk Percentile: This is an object (text) column, not numeric (e.g., '50th percentile'). We will have to extract the number.
+# 
+# Cleanup and Redundancy:
+# 
+# Redundant Columns: The result shows Name and Sector columns, however our df_financials file already has these. Since df_financials is our base table (our "source of truth"), the Name and Sector in this file are redundant. We will drop them to prevent a merge conflict (which would create Name_x, Name_y columns).
+# 
+# Useless Columns: Address, Full Time Employees, and Description are useless for our KPIs. They're long text fields we can't score or filter on, so they will be dropped.
+# 
+# Useful Column: Industry (e.g., "Solar") is not in the financial file and is not redundant. It's valuable data for user filtering, so we will keep this column.
+# 
+# File Mismatch: This file has 503 entries; the financial file has 505. This confirms our LEFT JOIN strategy is correct. The two companies from the financial list that aren't in this file will correctly show NaN for all ESG fields.
+
+# #### ***Null Value Analysis (Pre-Transform)***
+
 print("\nFinancials Nulls:")
 print(df_financials.isna().sum())
 
 print("\nESG Nulls:")
 print(df_esg.isna().sum())
 
+# Financials (df_financials): The nulls are exactly as we thought. They are minor and acceptable: 2 nulls for Price/Earnings and 8 for Price/Book. This show incomplete data, but not a big issue.
+# 
+# ESG (df_esg): This confirms the major data gap. The key KPI columns (Total ESG Risk score, Environment Risk Score, Controversy Level, etc.) are all missing 73 records. This is the "Not Rated" group we identified.
+# 
+# It also shows that Controversy Score is in even worse shape, with 100 nulls. This just reinforces that the ESG data is spotty, but it doesn't change our plan.
+
+# #### ***Simulate Proprietary Data (df_proprietary)***
 
 print("Simulating Proprietary Data")
 
@@ -130,15 +178,21 @@ symbols = df_financials['Symbol'].unique()
 np.random.seed(42) # Use a seed for consistent, repeatable results
 prop_scores = np.random.randint(40, 101, size=len(symbols))
 
-# Simulate Proprietary Data (df_proprietary)
-
 df_proprietary = pd.DataFrame({'Symbol': symbols, 'Proprietary Values Score': prop_scores})
 
 print(f"Simulated {len(df_proprietary)} proprietary scores.")
 print("Verifying head of simulated data:")
 print(df_proprietary.head())
 
-# Transformation (this process applies to this particular dataset.
+# Result: 
+# 
+# The simulation was successful. It created a new df_proprietary dataframe with 505 records, one for each Symbol in our df_financials base table. The head() output confirms the Proprietary Values Score column is populated with random integers.
+# 
+# Why are we doing this? We're simulating this data because the Proprietary Values Score is a critical KPI from our Part 1 business plan. We must have this column to prove our DSS can work as designed. Since we don't have a real file of internal scores, simulating it is the only way to test our complete ETL process. Using the df_financials['Symbol'] as the key guarantees it has the exact same 505 companies as our base table, ensuring a technically perfect merge.
+# 
+# Why isn't this introducing bias? Since this data itself is 100% fake and has no real-world correlation, we would not worry about this aspect right now. It's just random numbers. This doesn't introduce bias for the purpose of this project because our goal right now is not to find actual investment insights. Our goal is to prove the technical capability of our ETL process and DSS.
+
+# #### ***Transformation***
 
 print("Transforming Data (based on analysis)")
 
@@ -184,7 +238,7 @@ print("\nTransformation complete.")
 print(f"VERIFY: df_financials columns: {list(df_financials.columns)}")
 print(f"VERIFY: df_esg columns: {list(df_esg.columns)}")
 
-# Verification
+# #### ***Verification (Post-Transform)***
 
 print("--- Verifying Transformations ---")
 
@@ -206,9 +260,19 @@ print("\nESG Head (Post-Transform):")
 # and that 'Industry' was kept.
 print(df_esg.head())
 
-# Load (Merge)
+# Main Fix Verified: 
+# 
+# The output confirms our primary fix. The 52 Week High (mean $122.62) is now correctly greater than the 52 Week Low (mean $83.53). The columns are no longer inverted.
+# 
+# Text Cleanup Verified: The [ESG Unique Values] output proves our string cleaning worked. The Controversy Level column is now a clean list of single-word categories (['Moderate', 'Low', 'Severe', 'None', 'Significant', 'High']) instead of verbose sentences.
+# 
+# Numeric Conversion Verified: The [ESG Head] output shows ESG Risk Percentile is now a clean number (e.g., 50.0, 66.0), not a text string. The [Financials Info] block also confirms Price/Earnings is correctly typed as float64.
+# 
+# Column Selection Verified: The [ESG Head] output confirms our plan to keep the Industry column was successful.
 
-print("--- Step 4: Loading (Merging) Data ---")
+# #### ***Load (Merge)***
+
+print("Loading (Merging) Data")
 
 # L1: We will merge Financials (base) with ESG data
 # Using a LEFT JOIN to keep all 505 financial records
@@ -224,7 +288,19 @@ print(f"Merge complete. Final dataframe has {len(df_final)} rows.")
 print("--- Verifying head of final merged data ---")
 print(df_final.head())
 
-# Final Analysis (with the merged data)
+# Row Count: The output Merge complete. Final dataframe has 505 rows. confirms our logic was sound. We started with 505 financial records, joined them against 503 ESG records and 505 proprietary records, and correctly ended with 505 rows. No companies were lost.
+# 
+# Schema: The head() output is the first look at our final, unified dataset. It visually confirms that all our key columns from all three sources are now in a single row for each company:
+# 
+# Financial data (e.g., Price, 52 Week High/Low)
+# 
+# ESG data (e.g., Industry, Total ESG Risk score)
+# 
+# Proprietary data (e.g., Proprietary Values Score)
+# 
+# No Conflicts: Critically, there are no Name_x, Name_y columns. This proves that our transformation step to drop the redundant Name and Sector columns from the ESG file was the correct decision and prevented a messy merge.
+
+# #### ***Final Analysis (Merged Data)***
 
 print("--- Final Analysis of Merged Data ---")
 
@@ -234,23 +310,47 @@ df_final.info()
 print("\nFinal Null Counts (Post-Merge):")
 print(df_final.isna().sum())
 
-# Saving output files (first test of the results, not the final process).
+# Main Finding: 
+# 
+# Critical Data Mismatch. This is the most important finding of the entire ETL process. The [Final Null Counts] show 137 nulls for Total ESG Risk score and all other key ESG fields. This proves our two Kaggle files are not clean subsets of each other. This is the real-world data problem that we would face.
+# 
+# Here's the evidence from the numbers:
+# 
+# Our df_esg file (Block 4) had 430 companies with ESG scores.
+# 
+# Our final unified file only has 368 companies with ESG scores (505 total rows - 137 nulls).
+# 
+# This means 62 companies (430 - 368) that had an ESG score were discarded during the merge. Why? Because their Symbols (ticker) didn't exist in our df_financials base file.
+# 
+# This also means 137 companies from our df_financials base file have no ESG data. This is the true number of "Not Rated" companies in our final universe.
+# 
+# This isn't a failure. This is the finding. We were able to identified and quantified a major data integrity issue particularly in this case. Our final dataset for the dashboard will be based on the 368 companies where we have a complete match.
+# 
+# Minor Findings:
+# 
+# The original Price/Earnings (2 nulls) and Price/Book (8 nulls) counts are unchanged. This is correct.
+# 
+# Proprietary Values Score has 0 nulls, which is correct for our simulation.
+# 
+# Conclusion: The data is now fully unified. We have all the evidence for our report, including the critical mismatch we just found. All analysis is complete.
+
+# #### ***Save Output Files***
 
 print("Saving Output Files")
-df_final.to_csv("C:\\Users\\your_user\\your_folder\\pdss_unified_dataset.csv", index=False)
+df_final.to_csv(r"C:\Users\your_user\your_folder\pdss_unified_dataset.csv", index=False)
 
 # Saving the 100-record sample for the assignment submission
-df_final.head(100).to_csv("C:\\Users\\angom\\East Tennessee State University\\DSS Wealth Management Firm - Documents\\Processed Data\\pdss_data_sample.csv", index=False)
+df_final.head(100).to_csv("rC:\\Users\your_user\your_folder\pdss_data_sample.csv", index=False)
 print("\nSuccessfully created 'pdss_unified_dataset.csv' and 'pdss_data_sample.csv'")
 print("--- ETL Process Complete ---")
 
-# Loading to MySQL
+# #### ***Loading to MySQL***
 
 from sqlalchemy import create_engine
 
 # Database Connection Configuration
 db_user = 'root'
-db_password = 'your_password'
+db_password = 'password'
 db_host = 'localhost'
 db_port = '3306'
 db_name = 'wealth_management_dss'
@@ -282,135 +382,58 @@ except Exception as e:
     print(f"Error writing to database: {e}")
 
 ```
-</details>
 
-**3) Semantic Layer (Power BI):** The dashboard connects via Import Mode, allowing the final report to be a self-contained, high-performance artifact that doesn't require the end-user to have database access.
+3. Semantic Layer (Power BI)
+The dashboard connects to MySQL via Import Mode.
+
+Why Import Mode? It creates a high-performance, compressed in-memory model. This ensures the final .pbix file is a self-contained artifact that can be securely shared with stakeholders without requiring them to have direct network access to the backend database.
+
+Security: Unlike Excel spreadsheets which are often emailed and version-conflicted, this dataset enables Row-Level Security (RLS) and unified workspace management.
+
+ Dashboard Views1. Desktop ExperienceThe dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white/blue theme optimized for high-density information display.Page 1 - Investment ScreenerPurpose: Primary filtering engine for the S&P 500 universe.Key Visuals: * Valuation Gauge: Visualizes the portfolio's aggregate P/E against the hard limit of 25.0x.Risk Donut: Breaks down the selected cohort by ESG Risk Level.Conditional Grid: A detail table that auto-flags "Overvalued" stocks in red based on dynamic sector benchmarks.Page 2 - Risk vs. RewardPurpose: Visual trade-off analysis between Financial Value and Ethical Risk.Key Visuals: * Scatter Matrix: Plots Average P/E (X-Axis) vs. ESG Risk Score (Y-Axis).Quadrant Analysis: Automated reference lines divide the market into four actionable zones. The bottom-left quadrant represents the "Investable" Sweet Spot (Low Cost / Low Risk).Page 3 - Financial Detail ViewPurpose: Deep fundamental analysis of capital allocation.Key Visuals: * Correlation Plot: P/E vs. Price-to-Book to identify "Deep Value" assets.Capital Funnel: Visualizing the dominance of Tech in the S&P 500 market cap.Decomposition Tree: Allows users to drill down from Total Market Cap $\to$ Sector $\to$ Industry $\to$ Company.2. Mobile ExperienceThe report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity.<p float="left"><img src="image_4c7d3f.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d78.png" width="300" /><img src="https://www.google.com/search?q=image_4c7d9a.png" width="300" /></p>
 
 
-    A [Raw Data Sources] -->|Pandas Clean & Transform| B(Python ETL)
-    B -->|SQLAlchemy| C[(MySQL Database)]
-    C -->|Import Mode| D[Power BI Dashboard]
+Technical Implementation Details
+Advanced DAX Logic
+This project moves beyond simple aggregations (SUM) to use context-aware financial logic.
 
-
-*image of connection*
-
-**Dashboard Views**
-
-**1. Desktop Experience**
-   
-The dashboard features a custom "Financial Terminal" design system, branded under the identity of "Apex Private Capital". It utilizes a high-contrast white and blue theme optimized for clarity and high-density information display.
-
-Page 1 - Investment Screener: This page serves as the primary filtering engine for the investment universe.
-
-Key Features:
-
-Top KPI Ribbon: Displays high-level metrics such as total companies (505), industries (106), sectors (11), and the average P/E ratio (24.81) of the current selection.
-
-Valuation Gauge: A "P/E Benchmark Analysis" gauge that visualizes the current portfolio's average P/E against the firm's target limit of 25.
-
-Risk Distribution: A "Portfolio Yield" donut chart that breaks down the selected companies by their ESG Risk Level (Low, Medium, High, Severe).
-
-Detailed Data Grid: A tabular view of individual tickers with conditional formatting (red text) highlighting companies that exceed valuation thresholds.
-
-Page 2 - Risk vs. Reward: This page provides a visual trade-off analysis between financial value and ethical risk.
-
-Key Features:
-
-Scatter Plot Matrix: The "Risk-Adjusted Opportunity Map" plots the Average P/E Ratio (X-Axis) against the Average Total ESG Risk (Y-Axis).
-
-Quadrant Analysis: Automated reference lines (Max P/E: 25.00, High ESG Risk: 30.00) divide the chart into four actionable zones. The bottom-left quadrant represents the ideal "investable" zone (Low Cost, Low Risk).
-
-Cluster Identification: Bubbles are color-coded by Sector and sized by Market Cap, allowing for instant identification of sector-specific risk clusters.
-
-Page 3 - Financial Detail View: This page offers a deep fundamental analysis of capital allocation and market valuation.
-
-Key Features:
-
-Correlation Analysis: A scatter plot comparing "PE Ratio vs. Price to Book" to identify deep-value opportunities (low earnings multiples combined with low book value multiples).
-
-Capital Decomposition: A "Market Cap by Sector" funnel chart that visualizes the distribution of capital across the S&P 500, clearly showing the dominance of Information Technology.
-
-Hierarchical Breakdown: A decomposition tree allows users to drill down from Total Market Cap into specific Sectors, Industries, and individual Companies to see exactly where value is concentrated.
-
-Fundamental Heatmap: A matrix table comparing average P/E, Price-to-Book, Dividend Yield, and EPS across sectors, using conditional formatting (green/red backgrounds) to highlight undervalued and overvalued sectors.
-
-**2. Mobile Experience**
-
-The report includes a fully optimized Mobile Layout for on-the-go decision making. The navigation and visuals were reflowed to fit vertical screens without losing data fidelity.
-
-<p float="left">
-<img src="image_4c7d3f.png" width="300" />
-<img src="image_4c7d78.png" width="300" />
-<img src="image_4c7d9a.png" width="300" />
-</p>
-
-**Technical Implementation Details**
-
-Data Transformation (Python)
-
-We encountered real-world dirty data. The Python scripts handle:
-
-Regex Parsing: Stripping verbose text (e.g., "Severe Controversy Level" $\to$ "Severe").
-
-Logic Correction: Algorithmic swapping of columns where Low values were greater than High values.
-
-Data Simulation: Generating "Proprietary Scores" to test how internal data merges with public market data.
-
-DAX Measures
-
-1. ESG Display:
-   
+1. Dynamic Sector Benchmarking This measure calculates the average P/E ratio of a sector ignoring the user's specific company selection. This allows us to compare a single company against its peers dynamically.
 ```
-ESG Display = 
-VAR Score = SELECTEDVALUE('wealth_management_dss investment_universe'[total_esg_risk])
-RETURN
-IF(ISBLANK(Score), "Not Rated", FORMAT(Score, "0.0"))
-```
-
-2.Formatting PE Color:
-```
-   Formatting PE Color = 
-VAR CurrentPE = SELECTEDVALUE('wealth_management_dss investment_universe'[pe_ratio])
-VAR SectorAvg = [Sector Avg PE]
-RETURN
-IF(
-    NOT(ISBLANK(CurrentPE)) && CurrentPE > SectorAvg, 
-    "#FF0000", -- Red Hex Code
-    "#FFFFFF"  -- Black Hex Code
+Sector Avg PE = 
+CALCULATE(
+    AVERAGE('investment_universe'[pe_ratio]),
+    ALLEXCEPT('investment_universe', 'investment_universe'[sector])
 )
 ```
-
-3. Is Investable:
+2. The "Investable" Logic Gate A binary logic flag used for conditional formatting. It identifies companies that are either absolutely cheap (P/E < 25) OR relatively cheap (P/E < Sector Avg).
 ```
- Is Investable = 
+Is Investable = 
 VAR MaxPE = 25
 VAR SectorAvg = [Sector Avg PE]
-VAR CurrentPE = SELECTEDVALUE('wealth_management_dss investment_universe'[pe_ratio])
-
+VAR CurrentPE = SELECTEDVALUE('investment_universe'[pe_ratio])
 RETURN 
 IF(
     (CurrentPE < MaxPE || CurrentPE <= SectorAvg) && 
     NOT(ISBLANK(CurrentPE)), 
-    1, 
-    0
+    1, 0
 )
 ```
+3. ESG Data Handling Handling nulls in financial data is critical. This measure ensures that companies with missing ESG data are explicitly labeled "Not Rated" rather than disappearing from the visual.
+```
+ESG Display = 
+VAR Score = SELECTEDVALUE('investment_universe'[total_esg_risk])
+RETURN
+IF(ISBLANK(Score), "Not Rated", FORMAT(Score, "0.0"))
+```
+How to Use This Template
+This repository is open source. It is intended as a starting point for developers looking to build robust BI solutions. While this prototype uses a static snapshot of data, the architecture is ready to be connected to live APIs (e.g., Yahoo Finance, Alpha Vantage) for real-time analysis.
 
-4. Max PE Ratio:
-```
-Max_PE_Ratio = 50
-```
+Prerequisites:
 
-5. Target PE Ratio:
-```
-Target_PE_Ratio = 25
-```
+Python 3.9+
+MySQL Server
+Power BI Desktop
 
-5. Sector AVG PE:
-```
-Sector Avg PE = 
-CALCULATE(
-    AVERAGE('wealth_management_dss investment_universe'[pe_ratio]),
-    ALLEXCEPT('wealth_management_dss investment_universe', 'wealth_management_dss investment_universe'[sector])
-)
-```
+Developed by Angel Barrera, M.S. Data Science, Computer Engineer.
+
+
